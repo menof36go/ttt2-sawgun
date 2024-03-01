@@ -106,7 +106,7 @@ function SWEP:PrimaryAttack()
 			return 
 		end
 		self:FireRocket()
-		self.Owner:SetAnimation( PLAYER_ATTACK1 )
+		self:GetOwner():SetAnimation( PLAYER_ATTACK1 )
 		self:SetNextPrimaryFire(CurTime()+1/(self.Primary.RPM/60))
 		self:SetNextSecondaryFire(CurTime()+1/(self.Primary.RPM/60))		
 		self:EmitSound(Sound("Weapon_Knife.Slash"))
@@ -119,75 +119,75 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:FireRocket()
-	pos = self.Owner:GetShootPos()
+	pos = self:GetOwner():GetShootPos()
 	if SERVER then
 		local rocket = ents.Create(self.Primary.Round)
 		if !rocket:IsValid() then
 			return false 
 		end
-		rocket:SetAngles(self.Owner:GetAimVector():Angle())
+		rocket:SetAngles(self:GetOwner():GetAimVector():Angle())
 		rocket:SetPos(pos)
-		rocket:SetOwner(self.Owner)
+		rocket:SetOwner(self:GetOwner())
 		rocket:Spawn()
-		rocket.Owner = self.Owner
+		rocket.Owner = self:GetOwner()
 		rocket:Activate()
-		eyes = self.Owner:EyeAngles()
+		eyes = self:GetOwner():EyeAngles()
 		local phys = rocket:GetPhysicsObject()
-		phys:SetVelocity(self.Owner:GetAimVector() * 90000)
+		phys:SetVelocity(self:GetOwner():GetAimVector() * 90000)
 	end
-	if SERVER and !self.Owner:IsNPC() then
+	if SERVER and !self:GetOwner():IsNPC() then
 		local anglo = Angle(-10, -5, 0)		
-		self.Owner:ViewPunch(anglo)
+		self:GetOwner():ViewPunch(anglo)
 	end
 end
 
 function SWEP:FireRocket2()
-	aim = self.Owner:GetAimVector()
+	aim = self:GetOwner():GetAimVector()
 	side = aim:Cross(Vector(0,0,1))
-	pos = self.Owner:GetShootPos() + side * 20
+	pos = self:GetOwner():GetShootPos() + side * 20
 	if SERVER then
 		local rocket = ents.Create(self.Primary.Round)
 		if !rocket:IsValid() then 
 			return false 
 		end
-		rocket:SetAngles(self.Owner:GetAimVector():Angle())
+		rocket:SetAngles(self:GetOwner():GetAimVector():Angle())
 		rocket:SetPos(pos)
-		rocket:SetOwner(self.Owner)
+		rocket:SetOwner(self:GetOwner())
 		rocket:Spawn()
-		rocket.Owner = self.Owner
+		rocket.Owner = self:GetOwner()
 		rocket:Activate()
-		eyes = self.Owner:EyeAngles()
+		eyes = self:GetOwner():EyeAngles()
 		local phys = rocket:GetPhysicsObject()
-		phys:SetVelocity(self.Owner:GetAimVector() * 90000)
+		phys:SetVelocity(self:GetOwner():GetAimVector() * 90000)
 	end
-	if SERVER and !self.Owner:IsNPC() then
+	if SERVER and !self:GetOwner():IsNPC() then
 		local anglo = Angle(-10, -5, 0)		
-		self.Owner:ViewPunch(anglo)
+		self:GetOwner():ViewPunch(anglo)
 	end
 end
 
 function SWEP:FireRocket3()
-	aim = self.Owner:GetAimVector()
+	aim = self:GetOwner():GetAimVector()
 	side = aim:Cross(Vector(0,0,1))
-	pos = self.Owner:GetShootPos() + side * -20
+	pos = self:GetOwner():GetShootPos() + side * -20
 	if SERVER then
 		local rocket = ents.Create(self.Primary.Round)
 		if !rocket:IsValid() then 
 			return false 
 		end
-		rocket:SetAngles(self.Owner:GetAimVector():Angle())
+		rocket:SetAngles(self:GetOwner():GetAimVector():Angle())
 		rocket:SetPos(pos)
-		rocket:SetOwner(self.Owner)
+		rocket:SetOwner(self:GetOwner())
 		rocket:Spawn()
-		rocket.Owner = self.Owner
+		rocket.Owner = self:GetOwner()
 		rocket:Activate()
-		eyes = self.Owner:EyeAngles()
+		eyes = self:GetOwner():EyeAngles()
 		local phys = rocket:GetPhysicsObject()
-		phys:SetVelocity(self.Owner:GetAimVector() * 90000)
+		phys:SetVelocity(self:GetOwner():GetAimVector() * 90000)
 	end
-	if SERVER and !self.Owner:IsNPC() then
+	if SERVER and !self:GetOwner():IsNPC() then
 		local anglo = Angle(-10, -5, 0)		
-		self.Owner:ViewPunch(anglo)
+		self:GetOwner():ViewPunch(anglo)
 	end
 end
 
@@ -199,7 +199,7 @@ function SWEP:SecondaryAttack()
 		self:FireRocket()
 		self:FireRocket2()
 		self:FireRocket3()
-		self.Owner:SetAnimation( PLAYER_ATTACK1 )
+		self:GetOwner():SetAnimation( PLAYER_ATTACK1 )
 		self:SetNextSecondaryFire(CurTime()+1/(self.Primary.RPM/60))
 		self:SetNextPrimaryFire(CurTime()+1/(self.Primary.RPM/60))		
 		self:EmitSound(Sound("Weapon_Knife.Slash"))
@@ -215,7 +215,7 @@ end
 function SWEP:Reload()
 	self:SetupConvars()
 	if self:Clip1() == GetConVar("ttt_sawgun_clipSize"):GetInt() then return end
-	if self.Owner:GetAmmoCount(self:GetPrimaryAmmoType()) == 0 then return end 
+	if self:GetOwner():GetAmmoCount(self:GetPrimaryAmmoType()) == 0 then return end 
 	self.Ammo = self:Ammo1()
 	local need = self.Primary.ClipSize - self:Clip1()
 	if (self.Ammo >= need) then
@@ -240,7 +240,7 @@ end
 function SWEP:ChangeAmmo(amount)
 	pprint("Change ammo " .. tostring(self.Ammo) .. " by " .. tostring(amount))
 	if (amount >= 0) then
-		self.Owner:GiveAmmo(amount, self.Primary.Ammo)
+		self:GetOwner():GiveAmmo(amount, self.Primary.Ammo)
 		self.Ammo = self.Ammo + amount
 		pprint(self.Ammo)
 	else
@@ -250,7 +250,7 @@ end
 
 function SWEP:Equip()
 	if (SERVER) then
-		if IsValid(self.Owner) then
+		if IsValid(self:GetOwner()) then
 			if (self.Initialized) then
 				local toAdd = GetConVar("ttt_sawgun_ammo"):GetInt()
 				local need = self.Primary.ClipSize - self:Clip1()
@@ -264,7 +264,7 @@ function SWEP:Equip()
 				self:ChangeAmmo(toAdd)
 				self.Initialized = false
 			else
-				self.Owner:GiveAmmo(self.Ammo, self.Primary.Ammo)
+				self:GetOwner():GiveAmmo(self.Ammo, self.Primary.Ammo)
 			end
 		end
 	end
@@ -276,9 +276,9 @@ function SWEP:Deploy()
 	pprint("Deploy")
 	self:SetupConvars()
 	self:SendWeaponAnim(ACT_VM_DRAW)
-	if IsValid(self.Owner:GetViewModel()) then
-		self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
-		self:SetNextSecondaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+	if IsValid(self:GetOwner():GetViewModel()) then
+		self:SetNextPrimaryFire(CurTime() + self:GetOwner():GetViewModel():SequenceDuration())
+		self:SetNextSecondaryFire(CurTime() + self:GetOwner():GetViewModel():SequenceDuration())
 	end
 	return true	
 end
@@ -338,8 +338,8 @@ function SWEP:Initialize()
 		self:CreateModels(self.WElements) // create worldmodels
 		
 		// init view model bone build function
-		if IsValid(self.Owner) then
-			local vm = self.Owner:GetViewModel()
+		if IsValid(self:GetOwner()) then
+			local vm = self:GetOwner():GetViewModel()
 			if IsValid(vm) then
 				self:ResetBonePositions(vm)
 				
@@ -366,8 +366,8 @@ function SWEP:Initialize()
 end
 
 function SWEP:Holster()
-	if CLIENT and IsValid(self.Owner) then
-		local vm = self.Owner:GetViewModel()
+	if CLIENT and IsValid(self:GetOwner()) then
+		local vm = self:GetOwner():GetViewModel()
 		if IsValid(vm) then
 			self:ResetBonePositions(vm)
 		end
@@ -393,7 +393,7 @@ if CLIENT then
 	SWEP.vRenderOrder = nil
 	function SWEP:ViewModelDrawn()
 		
-		local vm = self.Owner:GetViewModel()
+		local vm = self:GetOwner():GetViewModel()
 		if !IsValid(vm) then return end
 		
 		if (!self.VElements) then return end
@@ -521,8 +521,8 @@ if CLIENT then
 
 		end
 		
-		if (IsValid(self.Owner)) then
-			bone_ent = self.Owner
+		if (IsValid(self:GetOwner())) then
+			bone_ent = self:GetOwner()
 		else
 			// when the weapon is dropped
 			bone_ent = self
@@ -647,8 +647,8 @@ if CLIENT then
 				pos, ang = m:GetTranslation(), m:GetAngles()
 			end
 			
-			if (IsValid(self.Owner) and self.Owner:IsPlayer() and 
-				ent == self.Owner:GetViewModel() and self.ViewModelFlip) then
+			if (IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and 
+				ent == self:GetOwner():GetViewModel() and self.ViewModelFlip) then
 				ang.r = -ang.r // Fixes mirrored models
 			end
 		
