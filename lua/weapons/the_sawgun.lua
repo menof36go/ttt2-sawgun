@@ -107,9 +107,9 @@ function SWEP:PrimaryAttack()
 		end
 		self:FireRocket()
 		self.Owner:SetAnimation( PLAYER_ATTACK1 )
-		self.Weapon:SetNextPrimaryFire(CurTime()+1/(self.Primary.RPM/60))
-		self.Weapon:SetNextSecondaryFire(CurTime()+1/(self.Primary.RPM/60))		
-		self.Weapon:EmitSound(Sound("Weapon_Knife.Slash"))
+		self:SetNextPrimaryFire(CurTime()+1/(self.Primary.RPM/60))
+		self:SetNextSecondaryFire(CurTime()+1/(self.Primary.RPM/60))		
+		self:EmitSound(Sound("Weapon_Knife.Slash"))
 		self.BaseClass.ShootEffects (self)
 		self:ChangeAmmo(-1)
 
@@ -200,9 +200,9 @@ function SWEP:SecondaryAttack()
 		self:FireRocket2()
 		self:FireRocket3()
 		self.Owner:SetAnimation( PLAYER_ATTACK1 )
-		self.Weapon:SetNextSecondaryFire(CurTime()+1/(self.Primary.RPM/60))
-		self.Weapon:SetNextPrimaryFire(CurTime()+1/(self.Primary.RPM/60))		
-		self.Weapon:EmitSound(Sound("Weapon_Knife.Slash"))
+		self:SetNextSecondaryFire(CurTime()+1/(self.Primary.RPM/60))
+		self:SetNextPrimaryFire(CurTime()+1/(self.Primary.RPM/60))		
+		self:EmitSound(Sound("Weapon_Knife.Slash"))
 		self.BaseClass.ShootEffects (self)
 		self:ChangeAmmo(-3)
 		
@@ -215,7 +215,7 @@ end
 function SWEP:Reload()
 	self:SetupConvars()
 	if self:Clip1() == GetConVar("ttt_sawgun_clipSize"):GetInt() then return end
-	if self.Owner:GetAmmoCount(self.Weapon:GetPrimaryAmmoType()) == 0 then return end 
+	if self.Owner:GetAmmoCount(self:GetPrimaryAmmoType()) == 0 then return end 
 	self.Ammo = self:Ammo1()
 	local need = self.Primary.ClipSize - self:Clip1()
 	if (self.Ammo >= need) then
@@ -225,7 +225,7 @@ function SWEP:Reload()
 	end
 	pprint(self.Ammo)
 	self:DefaultReload(ACT_VM_RELOAD) -- animation for reloading
-	self.Weapon:EmitSound(Sound("Weapon_Crossbow.Reload"))
+	self:EmitSound(Sound("Weapon_Crossbow.Reload"))
 end
 
 function SWEP:SetupConvars()
@@ -275,10 +275,10 @@ end
 function SWEP:Deploy()
 	pprint("Deploy")
 	self:SetupConvars()
-	self.Weapon:SendWeaponAnim(ACT_VM_DRAW)
+	self:SendWeaponAnim(ACT_VM_DRAW)
 	if IsValid(self.Owner:GetViewModel()) then
-		self.Weapon:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
-		self.Weapon:SetNextSecondaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+		self:SetNextPrimaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
+		self:SetNextSecondaryFire(CurTime() + self.Owner:GetViewModel():SequenceDuration())
 	end
 	return true	
 end
