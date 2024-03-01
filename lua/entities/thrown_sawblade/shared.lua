@@ -16,9 +16,9 @@ if SERVER then
 		self:SetModel("models/props_junk/sawblade001a.mdl")
 		self:SetMaterial("models/XQM/LightLinesRed_tool")
 		self:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		local phys = self.Entity:GetPhysicsObject()
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		local phys = self:GetPhysicsObject()
 		--self.NextThink = CurTime() +  1
 
 		if (phys:IsValid()) then
@@ -47,7 +47,7 @@ if SERVER then
 
 		self:GetPhysicsObject():SetMass(2)	
 
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetUseType(SIMPLE_USE)
 	end
 
 	/*---------------------------------------------------------
@@ -61,8 +61,8 @@ if SERVER then
 			self:Remove()
 		end
 		
-		if self.InFlight and self.Entity:GetAngles().pitch <= 55 then
-			self.Entity:GetPhysicsObject():AddAngleVelocity(Vector(0, 10, 0))
+		if self.InFlight and self:GetAngles().pitch <= 55 then
+			self:GetPhysicsObject():AddAngleVelocity(Vector(0, 10, 0))
 		end
 		
 	end
@@ -79,9 +79,9 @@ if SERVER then
 			self.InFlight = false
 			
 			if SawbladeCollide == false then 
-				self.Entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+				self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 			elseif SawbladeCollide == true then
-				self.Entity:SetCollisionGroup(COLLISION_GROUP_PLAYER)
+				self:SetCollisionGroup(COLLISION_GROUP_PLAYER)
 			end
 		end)
 	end
@@ -104,7 +104,7 @@ if SERVER then
 				self:EmitSound(Sound("weapons/blades/impact.wav"))
 				-- Put into a timer to avoid changing collision rules within a callback, since that is likely to cause crashes (As indicated by a default console message)
 				timer.Simple(0, function() self:SetPos(data.HitPos - data.HitNormal * 0) end)
-				self:SetAngles(self.Entity:GetAngles())
+				self:SetAngles(self:GetAngles())
 				self:GetPhysicsObject():EnableMotion(false)
 			else
 				self:EmitSound(self.Hit[math.random(1, #self.Hit)])
@@ -121,7 +121,7 @@ if SERVER then
 			SB_damage = GetConVar("ttt_sawgun_damage"):GetInt()
 			
 			if Ent:IsPlayer() or not(Ent:IsPlayer() or Ent:GetClass() == "npc_fastzombie" or Ent:GetClass() == "npc_zombie") then  	
-				--Ent:TakeDamage(SB_damage, self:GetOwner(), self.Entity)
+				--Ent:TakeDamage(SB_damage, self:GetOwner(), self)
 				local dmg = DamageInfo()
 				if IsValid(self.Owner) then
 					dmg:SetAttacker(self.Owner)
@@ -135,7 +135,7 @@ if SERVER then
 
 			
 			if Ent:GetClass() == "npc_fastzombie" then
-				util.BlastDamage(self.Entity, self.Owner, Ent:LocalToWorld(Ent:OBBCenter()), 5, 26)
+				util.BlastDamage(self, self.Owner, Ent:LocalToWorld(Ent:OBBCenter()), 5, 26)
 				Ent:Extinguish()
 			end
 			
@@ -144,15 +144,15 @@ if SERVER then
 			if Ent:GetClass() == "npc_zombie" then
 			
 				if randomchancetoletzombielive <= 5 then 
-					util.BlastDamage(self.Entity, self.Owner, Ent:LocalToWorld(Ent:OBBCenter()), 5,( ZombieHealth/2) - 1)
+					util.BlastDamage(self, self.Owner, Ent:LocalToWorld(Ent:OBBCenter()), 5,( ZombieHealth/2) - 1)
 				end
 				
 				if randomchancetoletzombielive > 5 then
-					util.BlastDamage(self.Entity, self.Owner, Ent:LocalToWorld(Ent:OBBCenter()), 5,( ZombieHealth/2) - 1)
+					util.BlastDamage(self, self.Owner, Ent:LocalToWorld(Ent:OBBCenter()), 5,( ZombieHealth/2) - 1)
 					
 					timer.Create("DelayedExtinguish_notalive"..self.Owner:UserID(), 0.15, 1, function()  
 					Ent:Extinguish()
-					Ent:TakeDamage(100, disistheowner, self.Entity)
+					Ent:TakeDamage(100, disistheowner, self)
 					end ) 
 					
 				end
@@ -180,7 +180,7 @@ if SERVER then
 		end
 
 		-- Put into a timer to avoid changing collision rules within a callback, since that is likely to cause crashes (As indicated by a default console message)
-		timer.Simple(0, function() self.Entity:SetOwner(NUL) end)
+		timer.Simple(0, function() self:SetOwner(NUL) end)
 	end
 
 	/*---------------------------------------------------------
@@ -189,13 +189,13 @@ if SERVER then
 	function ENT:Use(activator, caller) 
 		if (activator:IsPlayer()) then
 			activator:GiveAmmo(1,"357")
-			self.Entity:Remove()
+			self:Remove()
 		end
 	end
 end
 
 if CLIENT then
 	function ENT:Draw()
-		self.Entity:DrawModel()
+		self:DrawModel()
 	end
 end
