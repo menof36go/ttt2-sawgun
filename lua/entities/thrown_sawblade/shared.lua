@@ -123,8 +123,8 @@ if SERVER then
 			if Ent:IsPlayer() or not(Ent:IsPlayer() or Ent:GetClass() == "npc_fastzombie" or Ent:GetClass() == "npc_zombie") then  	
 				--Ent:TakeDamage(SB_damage, self:GetOwner(), self)
 				local dmg = DamageInfo()
-				if IsValid(self.Owner) then
-					dmg:SetAttacker(self.Owner)
+				if IsValid(self:GetOwner()) then
+					dmg:SetAttacker(self:GetOwner())
 				end
 				local inflictor = ents.Create("the_sawgun")
 				dmg:SetInflictor(inflictor)
@@ -135,7 +135,7 @@ if SERVER then
 
 			
 			if Ent:GetClass() == "npc_fastzombie" then
-				util.BlastDamage(self, self.Owner, Ent:LocalToWorld(Ent:OBBCenter()), 5, 26)
+				util.BlastDamage(self, self:GetOwner(), Ent:LocalToWorld(Ent:OBBCenter()), 5, 26)
 				Ent:Extinguish()
 			end
 			
@@ -144,20 +144,20 @@ if SERVER then
 			if Ent:GetClass() == "npc_zombie" then
 			
 				if randomchancetoletzombielive <= 5 then 
-					util.BlastDamage(self, self.Owner, Ent:LocalToWorld(Ent:OBBCenter()), 5,( ZombieHealth/2) - 1)
+					util.BlastDamage(self, self:GetOwner(), Ent:LocalToWorld(Ent:OBBCenter()), 5,( ZombieHealth/2) - 1)
 				end
 				
 				if randomchancetoletzombielive > 5 then
-					util.BlastDamage(self, self.Owner, Ent:LocalToWorld(Ent:OBBCenter()), 5,( ZombieHealth/2) - 1)
+					util.BlastDamage(self, self:GetOwner(), Ent:LocalToWorld(Ent:OBBCenter()), 5,( ZombieHealth/2) - 1)
 					
-					timer.Create("DelayedExtinguish_notalive"..self.Owner:UserID(), 0.15, 1, function()  
+					timer.Create("DelayedExtinguish_notalive"..self:GetOwner():UserID(), 0.15, 1, function()  
 					Ent:Extinguish()
 					Ent:TakeDamage(100, disistheowner, self)
 					end ) 
 					
 				end
 				
-				timer.Create("DelayedExtinguish"..self.Owner:UserID(), 0.1, 1, function()  
+				timer.Create("DelayedExtinguish"..self:GetOwner():UserID(), 0.1, 1, function()  
 					for k,v in pairs( ents.FindByModel( "models/zombie/classic_torso.mdl" ) ) do 
 						if IsValid(v) then 
 							v:Extinguish()
