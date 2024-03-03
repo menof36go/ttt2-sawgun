@@ -8,6 +8,7 @@ SWEP.Slot = 4
 SWEP.SlotPos = 3
 SWEP.Kind = WEAPON_EQUIP1
 SWEP.CanBuy = { ROLE_TRAITOR, ROLE_DETECTIVE }
+SWEP.LimitedStock = true
 
 SWEP.Spawnable = true
 SWEP.AdminOnly = false
